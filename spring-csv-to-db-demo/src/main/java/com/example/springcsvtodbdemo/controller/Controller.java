@@ -31,17 +31,6 @@ public class Controller {
 	private MyRepository myRepo;
 	static Logger LOG = Logger.getLogger(Controller.class.getName());
 
-	@RequestMapping("/hello")
-	public String hello() {
-		return "hello";
-	}
-	
-	@RequestMapping(value="/save",method=RequestMethod.POST)
-	public void saveToDb(@RequestBody Person person) {
-		
-		myRepo.save(person);
-		
-	}
 	
 	@RequestMapping(value="/getAll", method=RequestMethod.GET)
 	public List<Person> showAll() {
@@ -53,12 +42,15 @@ public class Controller {
 	
 	@RequestMapping(value="/file",method=RequestMethod.POST)
 	public void saveCSVtoDb(@RequestPart("file") MultipartFile file) throws IOException  {
-		
+		LOG.info("inside file save to DB");
 		Scanner sc=new Scanner(file.getInputStream());
 		sc.nextLine();
-		while(sc.hasNext())
-			System.out.println(sc.nextLine());
-		
+		while(sc.hasNext()) {
+			String arr[]=sc.nextLine().split(",");
+			Person person=new Person(arr[0],Integer.parseInt(arr[1]),Long.parseLong(arr[2]),arr[3]);
+			myRepo.save(person);
+			
 	}
 	
+}
 }
